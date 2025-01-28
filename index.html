@@ -5,18 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GitHub 文件反代</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 500px; margin: auto; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        .result { margin-top: 20px; }
-        a { color: #007bff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        :root {
+            --bg-color: #f4f4f4;
+            --text-color: #333;
+            --card-bg: white;
+            --btn-bg: #007bff;
+            --btn-hover: #0056b3;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #222;
+                --text-color: #f4f4f4;
+                --card-bg: #333;
+                --btn-bg: #0056b3;
+                --btn-hover: #007bff;
+            }
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .container {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            max-width: 500px;
+            margin: auto;
+        }
+        input {
+            width: calc(100% - 20px);
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background: var(--btn-bg);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: var(--btn-hover);
+        }
+        .result {
+            margin-top: 20px;
+            word-break: break-word;
+        }
+        a {
+            color: var(--btn-bg);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
     <script>
         function generateProxyUrl() {
-            let inputUrl = document.getElementById("github-url").value;
+            let inputUrl = document.getElementById("github-url").value.trim();
             let proxyBaseUrl = window.location.origin + "/";
 
             try {
@@ -36,12 +93,14 @@
                     let [branch, ...filePath] = branchAndPath.split("/");
                     result = `${proxyBaseUrl}${userRepo}/${branch}/${filePath.join("/")}`;
                 } else {
-                    result = "无效的 GitHub 链接";
+                    result = "❌ 无效的 GitHub 链接";
                 }
 
-                document.getElementById("proxy-url").innerHTML = `<a href="${result}" target="_blank">${result}</a>`;
+                document.getElementById("proxy-url").innerHTML = result.startsWith("❌") ? 
+                    `<span style="color: red;">${result}</span>` : 
+                    `<a href="${result}" target="_blank">${result}</a>`;
             } catch (error) {
-                document.getElementById("proxy-url").textContent = "解析失败，请检查输入的链接格式是否正确。";
+                document.getElementById("proxy-url").innerHTML = "<span style='color: red;'>解析失败，请检查输入的链接格式。</span>";
             }
         }
     </script>
