@@ -1,19 +1,12 @@
-<?php
-
-// 获取 URL 中的路径部分，去掉开头的斜杠
-$path = ltrim($_SERVER['REQUEST_URI'], '/');
-
-// 如果路径为空，则显示欢迎页面
-if (empty($path)) {
-    echo <<<HTML
-    <!DOCTYPE html>
-    <html lang="zh-CN">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>GitHub Raw 内容代理</title>
-        <style>
-            body {
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Raw 文件代理</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+           body {
                 font-family: sans-serif;
                 margin: 2em auto;
                 max-width: 800px;
@@ -39,66 +32,79 @@ if (empty($path)) {
                .center {
                  text-align: center;
                }
-        </style>
-    </head>
-    <body>
-        <div class="center">
-            <h1>欢迎使用 GitHub Raw 内容代理</h1>
-             <p>本代理用于访问 GitHub raw 内容, 你可以通过本代理访问 GitHub 的 raw 文件。</p>
-        </div>
+            #url-input {
+                width: 60%;
+               padding: 10px;
+               border: 1px solid #ddd;
+                margin-right: 10px;
+                min-width: 300px;
+           }
+           .container {
+               display: flex;
+               align-items: center;
+               justify-content: center;
+               margin-bottom: 20px
+           }
+           .preview-section {
+               margin-top: 30px
+           }
+           .button {
+               background-color: #007bff;
+               color: #fff;
+               padding: 10px 20px;
+               border: none;
+               cursor: pointer;
+               border-radius: 5px;
+           }
+           .button:hover{
+                background-color: #0056b3;
+           }
+            #content-preview{
+                margin-top: 20px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                overflow-x: auto;
+              white-space: pre-wrap;
+            }
+
+            .loading {
+                text-align: center;
+                margin-top: 20px;
+                font-style: italic;
+            }
+
+            .error-message {
+                color: red;
+                text-align: center;
+                margin-top: 20px;
+            }
         
-        <h2>使用方法:</h2>
-         <p> 你只需要在代理后面添加github的raw路径即可, 比如要访问一个 html 文件:  </p>
+    </style>
+</head>
+<body>
+    <div class="center">
+             <h1>GitHub Raw 文件代理</h1>
+             <p>本代理用于访问 GitHub 的 Raw 文件，你可以在这里粘贴 GitHub 的 Raw URL:</p>
+    </div>
+
+    <div class="container">
+    <input type="text" id="url-input" placeholder="输入 GitHub Raw URL">
+         <button class="button" id="fetch-button">获取内容</button>
+    </div>
+
+    <div class="preview-section">
+          <div class="loading" id="loading" style="display: none">加载中...</div>
+           <div class ="error-message" id="error-message" style="display: none"></div>
+         <pre id = "content-preview"></pre>
+    </div>
+
+      <p>示例，可以粘贴以下链接到输入框</p>
         <ul>
             <li>原始 URL: <a href="https://raw.githubusercontent.com/kaoqy/Github-Prxoy/refs/heads/main/index.html">https://raw.githubusercontent.com/kaoqy/Github-Prxoy/refs/heads/main/index.html</a></li>
-             <li>你的代理 URL: <code>你的域名/proxy.php<strong>/kaoqy/Github-Prxoy/main/index.html</strong></code>(例如: <a href="/kaoqy/Github-Prxoy/main/index.html">你的域名/proxy.php/kaoqy/Github-Prxoy/main/index.html</a>) )</li>
-        </ul>
-        <p><code>/refs/heads</code> 将会自动移除</p>
-         <p>本代理基于PHP开发,  <a href="https://github.com/kaoqy/proxy">GitHub地址</a></p>
-    </body>
-    </html>
-    HTML;
-    exit; // 终止后续代码执行
-}
-
-// 移除 '/refs/heads/' 部分
-$new_path = preg_replace('#/refs/heads/#', '/', $path);
-
-// 构建完整的 URL (你的原始 GitHub URL 前缀)
-$base_url = 'https://raw.githubusercontent.com';
-$target_url = $base_url . '/' . $new_path;
-
-// 使用 cURL 获取远程内容
-$ch = curl_init($target_url);
-
-// 设置 cURL 选项
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // 获取内容而不是输出
-curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // 跟踪重定向 (如果有)
-
-// 执行 cURL 请求
-$response = curl_exec($ch);
-
-// 获取 HTTP 状态码
-$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-// 获取 content-type
-$content_type = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-
-// 关闭 cURL
-curl_close($ch);
-
-// 根据 HTTP 状态码处理响应
-if ($http_code == 200) {
-	// 输出正确的 Content-Type
-    if($content_type){
-        header('Content-Type: ' . $content_type);
-    } 
-    // 输出远程内容
-    echo $response;
-} else {
-    // 输出错误信息和状态码
-    http_response_code($http_code);
-    echo "Error: Could not fetch content from $target_url. HTTP Status Code: $http_code";
-}
-
-?>
+                 </ul>
+     
+           <p><code>/refs/heads</code> 将会自动移除</p>
+        <p>本代理基于PHP开发,  <a href="https://github.com/kaoqy/proxy">GitHub地址</a></p>
+    <script src="script.js"></script>
+</body>
+</html>
