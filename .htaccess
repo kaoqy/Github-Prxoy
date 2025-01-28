@@ -1,4 +1,11 @@
 RewriteEngine On
+
+# 让根目录默认加载 index.html
+DirectoryIndex index.html index.php
+
+# 如果请求的文件或目录存在，则直接访问
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
+
+# 反代 GitHub 文件的规则
 RewriteRule ^([^/]+)/([^/]+)/([^/]+)/(.*)$ index.php [L]
