@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub 文件反代</title>
+</head>
+<body>
+    <h2>GitHub 文件反代</h2>
+    <input type="text" id="githubUrl" placeholder="输入 GitHub 文件 URL">
+    <button onclick="generateProxyUrl()">生成反代 URL</button>
+    <p>反代 URL: <a id="proxyLink" href="#" target="_blank"></a></p>
+
+    <script>
+        function generateProxyUrl() {
+            let inputUrl = document.getElementById("githubUrl").value.trim();
+            let proxyLink = document.getElementById("proxyLink");
+
+            try {
+                let url = new URL(inputUrl);
+                let pathSegments = url.pathname.split('/').filter(segment => segment); // 去除空白部分
+
+                if (url.hostname === "github.com") {
+                    // 处理 GitHub 页面 URL
+                    if (pathSegments.length >= 5 && pathSegments[2] === "blob") {
+                        var owner = pathSegments[0];
+                        var repo = pathSegments[1];
+                        var branch = pathSegments[3];
+                        var filePath = pathSegments.slice(4).join('/');
+                    } else if (pathSegments.length >= 6 && pathSegments[2] === "raw") {
+                        var owner = pathSegments[0];
+                        var repo = pathSegments[1];
+                        var branch = pathSegments[4];
+                        var filePath = pathSegments.slice(5).join('/');
+                    } else {
+                        throw new Error("无法解析此 GitHub URL");
+                    }
+                } else if (url.hostname === "raw.githubusercontent.com") {
+                    // 处理 raw.githubusercontent.com 直接文件链接
+                    if (pathSegments.length >= 4) {
+                        var owner = pathSegments[0];
+                        var repo = pathSegments[1];
+                        var branch = pathSegments[2];
+                        var filePath = pathSegments.slice(3).join('/');
+                    } else {
+                        throw new Error("无法解析此 raw URL");
+                    }
+                } else {
+                    throw new Error("不支持的 URL");
+                }
+
+                let proxyUrl = `/${owner}/${repo}/${branch}/${filePath}`;
+                proxyLink.href = proxyUrl;
+                proxyLink.textContent = proxyUrl;
+            } catch (error) {
+                proxyLink.href = "#";
+                proxyLink.textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>
