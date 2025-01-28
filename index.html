@@ -84,11 +84,11 @@
 <body>
     <div class="center">
              <h1>GitHub Raw 文件代理</h1>
-             <p>本代理用于访问 GitHub 的 Raw 文件，你可以在这里粘贴 GitHub 的 Raw URL:</p>
+             <p>本代理用于访问 GitHub 的 Raw 文件，你可以在这里粘贴 GitHub 仓库的 URL，支持raw、blob链接</p>
     </div>
 
     <div class="container">
-    <input type="text" id="url-input" placeholder="输入 GitHub Raw URL">
+    <input type="text" id="url-input" placeholder="输入 GitHub URL">
          <button class="button" id="fetch-button">获取内容</button>
     </div>
 
@@ -100,11 +100,13 @@
 
       <p>示例，可以粘贴以下链接到输入框</p>
         <ul>
-            <li>原始 URL: <a href="https://raw.githubusercontent.com/kaoqy/Github-Prxoy/refs/heads/main/index.html">https://raw.githubusercontent.com/kaoqy/Github-Prxoy/refs/heads/main/index.html</a></li>
+          <li>raw URL: <a href="https://raw.githubusercontent.com/kaoqy/Github-Prxoy/refs/heads/main/index.html">https://raw.githubusercontent.com/kaoqy/Github-Prxoy/refs/heads/main/index.html</a></li>
+            <li>raw URL(with `refs/heads`):<a href="https://github.com/kaoqy/Github-Prxoy/raw/refs/heads/main/index.html">https://github.com/kaoqy/Github-Prxoy/raw/refs/heads/main/index.html</a></li>
+            <li>blob URL: <a href="https://github.com/kaoqy/Github-Prxoy/blob/main/index.html">https://github.com/kaoqy/Github-Prxoy/blob/main/index.html</a></li>
                  </ul>
      
            <p><code>/refs/heads</code> 将会自动移除</p>
-        <p>本代理基于PHP开发,  <a href="https://github.com/kaoqy/proxy">GitHub地址</a></p>
+        <p>本代理基于 PHP 开发,  <a href="https://github.com/kaoqy/proxy">GitHub地址</a></p>
     <script src="script.js"></script>
 </body>
 </html>

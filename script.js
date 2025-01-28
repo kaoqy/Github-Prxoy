@@ -5,19 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const contentPreview = document.getElementById('content-preview');
      const errorMessageDiv = document.getElementById('error-message');
 
-    fetchButton.addEventListener('click', function() {
-        const url = urlInput.value.trim();
-        if (!url) {
-            alert('请输入 GitHub Raw URL！');
-            return;
-        }
-
+    
+    function fetchContent(url){
        loadingDiv.style.display = 'block';
-     errorMessageDiv.style.display = 'none'
-     contentPreview.innerHTML = '';
-        
-        // 使用 fetch 发送请求到服务器
-             fetch(`/proxy?url=${encodeURIComponent(url)}`)
+         errorMessageDiv.style.display = 'none'
+         contentPreview.innerHTML = '';
+      
+       fetch(`/proxy?url=${encodeURIComponent(url)}`)
             .then(response => {
                loadingDiv.style.display = 'none';
                 if (!response.ok) {
@@ -32,6 +26,23 @@ document.addEventListener('DOMContentLoaded', function() {
                    errorMessageDiv.style.display = 'block';
                     errorMessageDiv.textContent = `错误: ${error.message}`
                 });
+      
+    }
+	  fetchButton.addEventListener('click', function() {
+        const url = urlInput.value.trim();
+        if (!url) {
+            alert('请输入 GitHub URL！');
+            return;
+        }
+          fetchContent(url)
        
     });
+	
+	 // check if the url param exist in url, if so fetch the url content
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialUrl = urlParams.get('url');
+       if(initialUrl){
+	      urlInput.value = initialUrl
+	      fetchContent(initialUrl)
+      }  
 });
