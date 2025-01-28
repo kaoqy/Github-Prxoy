@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub 文件反代</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; text-align: center; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); max-width: 500px; margin: auto; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+    <script>
+        function generateProxyUrl() {
+            let inputUrl = document.getElementById("github-url").value;
+            let proxyBaseUrl = window.location.origin + "/";
+
+            try {
+                let result = "";
+
+                if (inputUrl.includes("raw.githubusercontent.com")) {
+                    let parts = inputUrl.split("raw.githubusercontent.com/")[1].split("/");
+                    result = `${proxyBaseUrl}${parts.join("/")}`;
+                } else if (inputUrl.includes("github.com") && inputUrl.includes("/blob/")) {
+                    let parts = inputUrl.split("github.com/")[1].split("/blob/");
+                    let [userRepo, branchAndPath] = parts;
+                    let [branch, ...filePath] = branchAndPath.split("/");
+                    result = `${proxyBaseUrl}${userRepo}/${branch}/${filePath.join("/")}`;
+                } else if (inputUrl.includes("github.com") && inputUrl.includes("/raw/")) {
+                    let parts = inputUrl.split("github.com/")[1].split("/raw/");
+                    let [userRepo, branchAndPath] = parts;
+                    let [branch, ...filePath] = branchAndPath.split("/");
+                    result = `${proxyBaseUrl}${userRepo}/${branch}/${filePath.join("/")}`;
+                } else {
+                    result = "无效的 GitHub 链接";
+                }
+
+                document.getElementById("proxy-url").innerHTML = `<a href="${result}" target="_blank">${result}</a>`;
+            } catch (error) {
+                document.getElementById("proxy-url").textContent = "解析失败，请检查输入的链接格式是否正确。";
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>GitHub 文件反代</h1>
+        <p>输入 GitHub 文件的 URL：</p>
+        <input type="text" id="github-url" placeholder="输入 GitHub 文件链接">
+        <button onclick="generateProxyUrl()">生成反代 URL</button>
+        
+        <div class="result">
+            <h2>反代 URL：</h2>
+            <p id="proxy-url"></p>
+        </div>
+    </div>
+</body>
+</html>
