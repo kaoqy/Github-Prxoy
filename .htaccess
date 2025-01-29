@@ -8,4 +8,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 
 # 反代 GitHub 文件的规则
-RewriteRule ^([^/]+)/([^/]+)/([^/]+)/(.*)$ script.php [L]
+RewriteRule ^([^/]+)/([^/]+)/([^/]+)/(.*)$ index.php [L]
